@@ -16,7 +16,7 @@ defmodule Ziox do
 
   defp parse_args(args) do
     {options,cmd,_} = OptionParser.parse(args,
-      switches: [dir_set: :string],
+      strict: [dir_set: :string],
       aliases: [s: :dir_set]
     )
   end
