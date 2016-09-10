@@ -8,9 +8,11 @@ defmodule Ziox.Up do
     dirs
     |> only_git
     |> Enum.map(&Task.async(fn ->
-          {out, exit_code} = System.cmd("git", ["pull", "--rebase", "origin/master"], cd: Path.expand(&1))
-          Logger.info "UP for #{Path.expand(&1)}\n" <> out
-        end))
+        case System.cmd("git", ["pull", "--rebase"], cd: Path.expand(&1), stderr_to_stdout: true) do
+          {out, 0} -> IO.puts "\n[INFO] - UP for #{Path.expand(&1)}\n" <> out
+          {out, 1} -> IO.puts "\n[ERROR] - UP for #{Path.expand(&1)} failed"
+        end
+      end))
     |> Enum.map(fn (pid) -> Task.await(pid) end)
 
   end
